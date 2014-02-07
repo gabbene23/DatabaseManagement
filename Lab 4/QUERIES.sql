@@ -20,7 +20,8 @@ FROM orders WHERE aid IN
      WHERE orders.cid IN
        (SELECT customers.cid 
        FROM customers 
-         WHERE customers.city = 'Kyoto'));
+         WHERE customers.city = 'Kyoto'))
+ORDER BY pid ASC;
          
 -- Query 3
 -- Find the cids and names of customers who never placed an order through agent a03.
@@ -30,7 +31,8 @@ FROM customers
   WHERE cid NOT IN 
     (SELECT cid
     FROM orders 
-      WHERE aid=  'a03'); 
+      WHERE aid=  'a03')
+ORDER BY cid ASC; 
 
 -- Query 4
 -- Get the cids and names of customers who ordered both product p01 and p07.	
@@ -44,7 +46,8 @@ FROM customers
       AND cid IN 
         (SELECT cid 
         FROM orders
-          WHERE pid = 'p07');
+          WHERE pid = 'p07')
+ORDER BY cid ASC; 
 
 -- Query 5
 -- Get the pids of products ordered by any customers who ever placed an order through agent a03.	
@@ -54,18 +57,12 @@ FROM orders
   WHERE cid IN
     (SELECT cid
     FROM orders
-      WHERE aid = 'a03');
+      WHERE aid = 'a03')
+ORDER BY pid ASC;
 
--- Not sure if select distinct is applicable since seeing multiple pids might be benefitial (should use a count, but not quite up to that in class)
 
-SELECT pid 
-FROM orders
-  WHERE cid IN
-    (SELECT cid
-    FROM orders
-      WHERE aid = 'a03');
-
--- Viable check added into quey (too convoluted, but works)
+-- IGNORE!!!
+-- Checks for the pids not the pids of ANY
 SELECT DISTINCT pid
 FROM products
   WHERE NOT EXISTS
@@ -76,7 +73,8 @@ FROM products
       (SELECT *
       FROM orders
         WHERE orders.pid = products.pid AND
-        orders.aid = agents.aid));
+        orders.aid = agents.aid))
+ORDER BY pid ASC;
 
 -- Query 6
 -- Get the names and discounts of all customers who place prders through agents in Dallas or Duluth
@@ -90,7 +88,8 @@ FROM customers
         (SELECT aid 
         FROM agents
           WHERE city = 'Dallas' OR
-          city = 'Duluth'));
+          city = 'Duluth'))
+ ORDER BY name ASC; 
           
 -- Query 7
 -- Find all customers who have the same discount as that of any customers in Dallas or Kyoto
@@ -103,4 +102,5 @@ FROM customers
     (SELECT discount 
     FROM customers
       WHERE city = 'Dallas' OR
-      city = 'Kyoto');
+      city = 'Kyoto')
+ORDER BY cid ASC;
