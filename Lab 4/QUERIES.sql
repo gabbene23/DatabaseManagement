@@ -57,24 +57,12 @@ FROM orders
   WHERE cid IN
     (SELECT cid
     FROM orders
-<<<<<<< HEAD
-<<<<<<< HEAD
-      WHERE aid = 'a03'
-      ORDER BY pid);
-
-=======
-=======
->>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
       WHERE aid = 'a03')
 ORDER BY pid ASC;
 
 
--- IGNORE!!!
+-- IGNORE THIS QUERY!!!
 -- Checks for the pids not the pids of ANY
-<<<<<<< HEAD
->>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
-=======
->>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
 SELECT DISTINCT pid
 FROM products
   WHERE NOT EXISTS
@@ -85,17 +73,8 @@ FROM products
       (SELECT *
       FROM orders
         WHERE orders.pid = products.pid AND
-<<<<<<< HEAD
-<<<<<<< HEAD
-        orders.aid = agents.aid));
-=======
         orders.aid = agents.aid))
 ORDER BY pid ASC;
->>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
-=======
-        orders.aid = agents.aid))
-ORDER BY pid ASC;
->>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
 
 -- Query 6
 -- Get the names and discounts of all customers who place prders through agents in Dallas or Duluth
@@ -124,8 +103,4 @@ FROM customers
     FROM customers
       WHERE city = 'Dallas' OR
       city = 'Kyoto')
-<<<<<<< HEAD
 ORDER BY cid ASC;
-=======
-ORDER BY cid ASC;
->>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
