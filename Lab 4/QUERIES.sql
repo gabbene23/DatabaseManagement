@@ -58,16 +58,22 @@ FROM orders
     (SELECT cid
     FROM orders
 <<<<<<< HEAD
+<<<<<<< HEAD
       WHERE aid = 'a03'
       ORDER BY pid);
 
 =======
+=======
+>>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
       WHERE aid = 'a03')
 ORDER BY pid ASC;
 
 
 -- IGNORE!!!
 -- Checks for the pids not the pids of ANY
+<<<<<<< HEAD
+>>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
+=======
 >>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
 SELECT DISTINCT pid
 FROM products
@@ -80,7 +86,12 @@ FROM products
       FROM orders
         WHERE orders.pid = products.pid AND
 <<<<<<< HEAD
+<<<<<<< HEAD
         orders.aid = agents.aid));
+=======
+        orders.aid = agents.aid))
+ORDER BY pid ASC;
+>>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
 =======
         orders.aid = agents.aid))
 ORDER BY pid ASC;
@@ -113,4 +124,8 @@ FROM customers
     FROM customers
       WHERE city = 'Dallas' OR
       city = 'Kyoto')
+<<<<<<< HEAD
 ORDER BY cid ASC;
+=======
+ORDER BY cid ASC;
+>>>>>>> 7dba7a970c99cab9981a761cd6a8bcfb7f5dea57
