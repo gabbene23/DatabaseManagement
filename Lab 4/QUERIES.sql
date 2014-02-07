@@ -49,6 +49,23 @@ FROM customers
 -- Query 5
 -- Get the pids of products ordered by any customers who ever placed an order through agent a03.	
 
+SELECT DISTINCT pid 
+FROM orders
+  WHERE cid IN
+    (SELECT cid
+    FROM orders
+      WHERE aid = 'a03');
+
+-- Not sure if select distinct is applicable since seeing multiple pids might be benefitial (should use a count, but not quite up to that in class)
+
+SELECT pid 
+FROM orders
+  WHERE cid IN
+    (SELECT cid
+    FROM orders
+      WHERE aid = 'a03');
+
+-- Viable check added into quey (too convoluted, but works)
 SELECT DISTINCT pid
 FROM products
   WHERE NOT EXISTS
@@ -60,13 +77,6 @@ FROM products
       FROM orders
         WHERE orders.pid = products.pid AND
         orders.aid = agents.aid));
-
-SELECT DISTINCT pid 
-FROM Orders
-  WHERE cid IN
-    (SELECT cid
-    FROM orders
-      WHERE aid = 'a03');
 
 -- Query 6
 -- Get the names and discounts of all customers who place prders through agents in Dallas or Duluth
