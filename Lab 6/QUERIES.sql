@@ -61,6 +61,18 @@ ORDER BY orders.dollars DESC;
 -- Show all customer names (in order) and their total ordered, and nothing more. 
 -- Use coalesce to avoid showing NULLs. 
 
+-- WRONG!!
+SELECT DISTINCT c.name, sum(o.qty) as "Total Ordered"
+  FROM customers c, 
+       orders o
+    WHERE c.cid = o.cid AND
+      (SELECT coalesce(qty, 0)
+      FROM orders) 
+ORDER BY name ASC;
+
+select *
+FROM orders, customers;
+
 -- Query 6
 -- Write a query to check the accuracy of the dollars column in the Orders table. 
 -- This means calculating Orders.dollars from other data in other tables and then 
