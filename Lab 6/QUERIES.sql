@@ -66,12 +66,20 @@ SELECT DISTINCT c.name, sum(o.qty) as "Total Ordered"
   FROM customers c, 
        orders o
     WHERE c.cid = o.cid AND
-      (SELECT coalesce(qty, 0)
+      (SELECT qty,0)
       FROM orders) 
 ORDER BY name ASC;
 
-select *
-FROM orders, customers;
+-- BETTER BUT COALESCE NOT WORKING!
+SELECT c.name, sum(qty) as "Total Ordered"
+FROM orders o, 
+     customers c
+  WHERE c.cid = o.cid AND
+    (SELECT o.qty
+    FROM orders o
+      WHERE COALESCE(o.qty, 0) as "Total Ordered") 
+GROUP BY c.name
+ORDER BY c.name ASC;
 
 -- Query 6
 -- Write a query to check the accuracy of the dollars column in the Orders table. 
