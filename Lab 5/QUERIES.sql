@@ -40,7 +40,16 @@ ORDER BY name ASC;
 -- Query 4:
 -- Get the names of customers who have never placed an order. Use an outer join.
 
+-- using DISTINCT
 SELECT DISTINCT name 
+FROM customers LEFT OUTER JOIN 
+  orders ON
+    customers.cid = orders.cid WHERE
+      orders.cid IS NULL
+ORDER BY name ASC;
+
+-- NOT using DISTINCT 
+SELECT name 
 FROM customers LEFT OUTER JOIN 
   orders ON
     customers.cid = orders.cid WHERE
