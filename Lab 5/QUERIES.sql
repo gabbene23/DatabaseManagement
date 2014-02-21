@@ -71,12 +71,25 @@ ORDER BY CustomerName ASC;
 -- Get the name and city of customers who live in the city where the least number of
 -- products are made.
 
+-- WORKS, PLEASE GRADE THIS ONE!
 SELECT DISTINCT customers.name, customers.city 
 FROM customers WHERE
    customers.city IN 
      (SELECT city 
      FROM products
        GROUP BY city
-         ORDER BY COUNT(quantity) DESC
+         ORDER BY SUM(quantity) ASC
            LIMIT 1)
 ORDER BY customers.name ASC; 
+
+-- Example In Class...not working properly
+
+SELECT DISTINCT customers.name, customers.city 
+FROM customers WHERE
+   customers.city IN
+   (SELECT SUM(quantity) as "sq"
+   FROM products
+     GROUP BY city
+       ORDER BY SUM(quantity) ASC
+         LIMIT 1)
+ORDER BY customers.name ASC;
