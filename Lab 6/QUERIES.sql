@@ -61,24 +61,11 @@ ORDER BY orders.dollars DESC;
 -- Show all customer names (in order) and their total ordered, and nothing more. 
 -- Use coalesce to avoid showing NULLs. 
 
--- WRONG!!
-SELECT DISTINCT c.name, sum(o.qty) as "Total Ordered"
-  FROM customers c, 
-       orders o
-    WHERE c.cid = o.cid AND
-      (SELECT qty,0)
-      FROM orders) 
-ORDER BY name ASC;
-
--- BETTER BUT COALESCE NOT WORKING!
-SELECT c.name, sum(qty) as "Total Ordered"
-FROM orders o, 
-     customers c
-  WHERE c.cid = o.cid AND
-    (SELECT o.qty
-    FROM orders o
-      WHERE COALESCE(o.qty, 0) as "Total Ordered") 
-GROUP BY c.name
+SELECT c.name, COALESCE(sum(qty),0) as "Total Ordered"
+FROM customers c LEFT OUTER JOIN
+     orders o
+  ON c.cid = o.cid   
+    GROUP BY c.name
 ORDER BY c.name ASC;
 
 -- Query 6
@@ -86,6 +73,24 @@ ORDER BY c.name ASC;
 -- This means calculating Orders.dollars from other data in other tables and then 
 -- comparing those values to the values in Orders.dollars.
 
+SELECT *
+FROM orders o,
+     customers c,
+     products p
+  WHERE o.cid = c.cid AND
+    o.pid = p.pid AND
+      o.dollars != ( p.priceusd * o.qty * ((100 - c.discount) / 100)) AND
+          o.dollars IS NOT NULL;
+
 -- Query 7
 -- Create an error in the dollars column of the Orders table so that you can 
 -- verify your accuracy checking query.
+
+UPDATE orders
+  SET dollars = 2014 -- It was initially 1104
+    WHERE ordno = 1015;
+
+-- Returns Orders database to CAP2 Form
+UPDATE orders
+  SET dollars = 1104 
+    WHERE ordno = 1015;
