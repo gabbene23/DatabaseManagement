@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS Suppliers;
 
 -- Core Table for Reference for All Jobs 
 CREATE TABLE People (
-Pid SERIAL NOT NULL,
+Pid INTEGER NOT NULL,
 LastName VARCHAR(35) NOT NULL,
 FirstName VARCHAR(35) NOT NULL,
 Age INTEGER NULL,
@@ -67,25 +67,25 @@ PRIMARY KEY (SupID)
 
 -- Engineer Table
 CREATE TABLE Engineer (
-Eid SERIAL REFERENCES People(Pid),
-Degree VARCHAR(35) NOT NULL,
+Eid INTEGER REFERENCES People(Pid),
+Degree TEXT NOT NULL,
 FavoriteVG VARCHAR(60) NULL,
 PRIMARY KEY (Eid)
 ); 
 
 -- Astronaut Table
 CREATE TABLE Astronaut (
-Aid SERIAL REFERENCES People(Pid),
+Aid INTEGER REFERENCES People(Pid),
 YearsFlying INTEGER NOT NULL,
-GolfHC VARCHAR(4) NULL,
+GolfHC VARCHAR(5) NULL,
 PRIMARY KEY (Aid)
 ); 
 
 -- Operator Table
 CREATE TABLE Operator (
-Oid SERIAL REFERENCES People(Pid),
-ChairPref varchar(10) NOT NULL,  --Add Check constraint here with default as None?
-DrinkPref VARCHAR(4) NULL, --And maybe here??
+Oid INTEGER REFERENCES People(Pid),
+ChairPref TEXT NOT NULL,  --Add Check constraint here with default as None?
+DrinkPref TEXT NULL, --And maybe here??
 PRIMARY KEY (Oid)
 ); 
 
@@ -125,20 +125,34 @@ PRIMARY KEY (Cid ,SupID)
 ); 
 
 -- SAMPLE DATA FOR INSERT STATEMENTS
-INSERT INTO People (LastName,FirstName,Age)
+INSERT INTO People (Pid,LastName,FirstName,Age)
 VALUES
-('Lannister', 'Cersei', 40), --Engineer
-('Lannister', 'Jamie', 40), --Engineer
-('Lannister', 'Tyrion', 30), --Engineer
-('Stark', 'Sansa', 14), -- Operator
-('Stark', 'Bran', 10), -- Operator
-('Stark', 'Arya', 12), -- Operator
-('Aldridge', 'Buzz', 82), -- Astronaut
-('Armstrong', 'Neil', 82), --Astronaut
-('Sean', 'Connery', 83); --Astronaut
+(1, 'Lannister', 'Cersei', 40), --Engineer
+(2, 'Lannister', 'Jamie', 40), --Engineer
+(3, 'Lannister', 'Tyrion', 30), --Engineer
+(4, 'Stark', 'Sansa', 14), -- Operator
+(5, 'Stark', 'Bran', 10), -- Operator
+(6, 'Stark', 'Arya', 12), -- Operator
+(7, 'Aldridge', 'Buzz', 82), -- Astronaut
+(8, 'Armstrong', 'Neil', 82), --Astronaut
+(9, 'Sean', 'Connery', 83); --Astronaut
 
-INSERT INTO Engineer (Degree,FavoriteVG)
+INSERT INTO Engineer (Eid,Degree,FavoriteVG)
 VALUES
-('Cersei', '40'), --Engineer
-('Jamie', '40'), --Engineer
-('Tyrion', '30'), --Engineer
+(1, 'Bachelor of Engineering in Chemical Engineering', 'Grand Theft Auto'), -- Cersei 
+(2, 'Master of Sciene in Electrical Engineering', 'Skyrim'), -- Jamie
+(3, 'Doctor of Philosophy in Strategy', 'Risk'); -- Tyrion
+
+INSERT INTO Operator (Oid,ChairPref,DrinkPref)
+VALUES
+(4, 'Guidance Procedures Officer', 'Ginger Ale'), -- Sansa 
+(5, 'Flight Director', 'Water'), -- Bran
+(6, 'Spacecraft Communicator', 'Dornish Wine'); -- Arya
+
+INSERT INTO Astronaut (Aid,YearsFlying,GolfHC)
+VALUES
+(7, 45, '-1'), -- Buzz 
+(8, 45, '-1'), -- Neil
+(9, 80, '+99'); --Sean
+
+SELECT * FROM OPERATOR
