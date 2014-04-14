@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS Internal;
 DROP TABLE IF EXISTS SystemDetails;
 DROP TABLE IF EXISTS Catalog;
 DROP TABLE IF EXISTS People;
-DROP TABLE IF EXISTS Spacecraft;
+DROP TABLE IF EXISTS Spacecrafts;
 DROP TABLE IF EXISTS Systems;
 DROP TABLE IF EXISTS Parts;
 DROP TABLE IF EXISTS Suppliers;
@@ -31,12 +31,13 @@ PRIMARY KEY (Pid)
 );
 
 -- Core Table for Reference for Spacecraft details
-CREATE TABLE Spacecraft (
+CREATE TABLE Spacecrafts (
 Sid INTEGER NOT NULL,
 Name TEXT NOT NULL,
 TailNumber VARCHAR(35) NOT NULL,
-WgtTons BIGINT NULL,
-Fue BIGINT NULL,
+WgtTons BIGINT NOT NULL,
+Fuel CHAR(1) NOT NULL DEFAULT 'S' CHECK(Fuel='S'or Fuel='B' or Fuel='A'), -- Defaults to "SOlid-Fuel" 
+--type as "S" and checks for either biopropellant("B") or Air-Breathing("A")
 CrewCapacity INTEGER NULL,
 PRIMARY KEY (Sid)
 ); 
@@ -60,6 +61,7 @@ PRIMARY KEY (PartID)
 -- Core Table for Reference of Catalog
 CREATE TABLE Suppliers (
 SupID INTEGER NOT NULL,
+Name TEXT NOT NULL,
 Address VARCHAR(60) NOT NULL,
 PmtTerms TEXT NOT NULL,
 PRIMARY KEY (SupID)
@@ -92,7 +94,7 @@ PRIMARY KEY (Oid)
 -- Flights Table
 CREATE TABLE Flights (
 Fid INTEGER NOT NULL UNIQUE,
-Sid INTEGER REFERENCES Spacecraft(Sid), 
+Sid INTEGER REFERENCES Spacecrafts(Sid), 
 PRIMARY KEY (Fid,Sid)
 ); 
 
@@ -105,7 +107,7 @@ PRIMARY KEY (Fid,Pid)
 
 -- Internal Table
 CREATE TABLE Internal (
-Sid INTEGER REFERENCES Spacecraft(Sid),
+Sid INTEGER REFERENCES Spacecrafts(Sid),
 SysID INTEGER REFERENCES Systems(SysID), 
 PRIMARY KEY (Sid,SysID)
 ); 
@@ -137,6 +139,47 @@ VALUES
 (8, 'Armstrong', 'Neil', 82), --Astronaut
 (9, 'Sean', 'Connery', 83); --Astronaut
 
+INSERT INTO Spacecrafts (Sid,Name,TailNumber,WgtTons,Fuel,CrewCapacity)
+VALUES
+(1, 'Braavos', 'Z2398571', 75, 'A', 5), 
+(2, 'Winterfell', 'SS22031', 100, 'S', 7), 
+(3, 'Kings Landing', 'LSM85931', 150, 'B', 10), 
+(4, 'Iron Islands', 'K784012', 90, 'S', 7); 
+
+INSERT INTO Flights(Fid,Sid)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 3);
+
+INSERT INTO Systems(SysID,Name,Description)
+VALUES
+(1, 'Dothraki', 'A Primitive System'),
+(2, 'Riverrun', 'Black Fish System..the Sky is the Limit'),
+(3, 'Khalessi', 'Dragon System!!'),
+(4, 'Knights Watch', 'The Watcher of the Wall...and Best System');
+
+INSERT INTO Parts(PartID,Name,Description)
+VALUES
+(1, 'Arakh', 'Orbiter'),
+(2, 'Gold', 'Orbiter'),
+(3, 'Valyrian', 'Orbiter'),
+(4, 'Fish', 'External Tank'),
+(5, 'Dragon', 'External Tank'),
+(6, 'White Walker', 'External Tank'),
+(7, 'Earth', 'Booster'),
+(8, 'Fire', 'Booster'),
+(9, 'Ice', 'Booster');
+
+
+INSERT INTO Suppliers(SupID,Name,Address,PmtTerms)
+VALUES
+(1, 'Dorne', '2 South Bay', '10 days'),
+(2, 'Lanisport', '1 Casterly Rock', '2 days'),
+(3, 'Blackwater', '14 Broken Bay', '60 days');
+
 INSERT INTO Engineer (Eid,Degree,FavoriteVG)
 VALUES
 (1, 'Bachelor of Engineering in Chemical Engineering', 'Grand Theft Auto'), -- Cersei 
@@ -155,4 +198,68 @@ VALUES
 (8, 45, '-1'), -- Neil
 (9, 80, '+99'); --Sean
 
-SELECT * FROM OPERATOR
+INSERT INTO Crew (Fid,Pid)
+VALUES
+(1, 3),
+(1, 6),
+(1, 9),
+(2, 3),
+(2, 5),
+(2, 7),
+(3, 1),
+(3, 2),
+(3, 4),
+(3, 9),
+(4, 2),
+(4, 5),
+(4, 8),
+(5, 1),
+(5, 2),
+(5, 6),
+(5, 7);
+
+INSERT INTO Internal (Sid,SysID)
+VALUES
+(1, 2),
+(1, 3),
+(2, 4),
+(3, 1),
+(4, 4);
+
+INSERT INTO SystemDetails (SysID,PartID)
+VALUES
+(1, 1),
+(1, 4),
+(1, 7),
+(2, 3),
+(2, 4),
+(2, 9),
+(3, 2),
+(3, 5),
+(3, 8),
+(4, 3),
+(4, 6),
+(4, 9);
+
+INSERT INTO Catalog (Cid,SupID)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 3),
+(5, 2),
+(6, 2),
+(7, 2),
+(8, 3),
+(9, 1);
+
+SELECT * FROM
+People
+--Engineer
+--Astronaut
+--Operator
+--Internal
+--Crew
+--Flights
+--Systems
+--Spacecrafts

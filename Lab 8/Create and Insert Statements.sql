@@ -10,12 +10,12 @@ DROP TABLE IF EXISTS Directors;
 DROP TABLE IF EXISTS Movies;
 DROP TABLE IF EXISTS People;
 
--- Core Table for Reference for Actors and Directors
+-- Core Table (Strong Entity)for Reference for Actors and Directors
 CREATE TABLE People (
-pID INT NOT NULL,
+pID INT NOT NULL,  --Artifical Key
 LastName VARCHAR(35) NOT NULL,
 FirstName VARCHAR(35) NOT NULL,
-Address VARCHAR(60), --Added address for the Actors as well
+Address VARCHAR(60), 
 Status CHAR(1) DEFAULT 'N' CHECK (Status='A' or Status='D' or Status='B' or Status='N'), 
 -- Status is a check for what position the Person is...A = Actor, D = Director, B = Both, and N = Information not avaliable or None  
 PRIMARY KEY (pID)
