@@ -18,7 +18,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-SELECT PreReqsFor(308, 'results');
+SELECT PreReqsFor(499, 'results');
 FETCH ALL from results;
 
 -- 2) function IsPreReqsFor(courseNum) - Returns the course for which the passed-in course
@@ -38,5 +38,5 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-SELECT IsPreReqsFor(308, 'results');
+SELECT IsPreReqsFor(120, 'results');
 FETCH ALL from results;
