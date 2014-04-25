@@ -21,6 +21,7 @@ DROP VIEW IF EXISTS DailySalesUPC;
 DROP VIEW IF EXISTS ItemLookup;
 DROP VIEW IF EXISTS ZeroSalesUPC;
 DROP VIEW IF EXISTS VendorNew;
+DROP VIEW IF EXISTS DailyATSales;
 
 DROP TABLE IF EXISTS PeopleAddresses;
 DROP TABLE IF EXISTS VendorAddresses;
@@ -872,6 +873,7 @@ CREATE OR REPLACE FUNCTION PointFixPeriod() RETURNS
 		WHERE PointsThisPeriod != ( PurchaseAmtThisPeriod / 2) AND
 		      PointsThisPeriod IS NOT NULL;   
 ' LANGUAGE SQL;
+
 SELECT PointFixPeriod();
 SELECT * FROM Customers ORDER BY cID ASC;
 
@@ -887,12 +889,103 @@ CREATE OR REPLACE FUNCTION PointFixDate() RETURNS
 SELECT PointFixDate();
 SELECT * FROM Customers ORDER BY cID ASC;
 
+
+-- Same Store Procs, but using triggers
+DROP FUNCTION IF EXISTS trigPointFixPeriod();
+CREATE OR REPLACE FUNCTION trigPointFixPeriod() RETURNS 
+	TRIGGER AS $$
+BEGIN
+	UPDATE Customers  
+	SET PointsThisPeriod = ( PurchaseAmtThisPeriod / 2) 
+		WHERE PointsThisPeriod != ( PurchaseAmtThisPeriod / 2) AND
+		      PointsThisPeriod IS NOT NULL;  
+END; 
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER fix_points_period
+AFTER UPDATE ON Customers
+FOR EACH ROW
+EXECUTE PROCEDURE trigPointFixPeriod();
+
+
+DROP FUNCTION IF EXISTS trigPointFixDate();
+CREATE OR REPLACE FUNCTION trigPointFixDate() RETURNS 
+	TRIGGER AS $$
+BEGIN
+	UPDATE Customers  
+	SET PointsToDate = ( PurchaseAmtToDate / 2) 
+		WHERE PointsToDate != ( PurchaseAmtToDate / 2) AND
+		      PointsToDate IS NOT NULL;  
+END; 
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER fix_points_date
+AFTER UPDATE ON Customers
+FOR EACH ROW
+EXECUTE PROCEDURE trigPointFixDate();
+
+-- Security Roles
+--Creating Role
+CREATE ROLE DatabaseAdmin;
+--Granting Access
+GRANT SELECT,INSERT,UPDATE 
+ON ALL TABLES IN SCHEMA public
+TO DatabaseAdmin;
+
+--Creating PricingManager Role
+CREATE ROLE PricingManager;
+--Granting Access
+GRANT SELECT,INSERT,UPDATE 
+ON ALL TABLES IN SCHEMA public
+TO PricingManager;
+--Revoking certain Pricing Manager Privileges
+REVOKE ALL PRIVILEGES  
+ON Employees 
+FROM PricingManager;
+
+--Creating NonManager Role
+CREATE ROLE NonManager;
+--Granting Select Only Access
+GRANT SELECT
+ON Item 
+TO NonManager;
+GRANT SELECT
+ON Vendors 
+TO NonManager;
+
+
+
+-- FAILED TRIGGERS!!!
+-- Everytime a Customer Purchases the item, it will go into DailySales 
+-- for that date. 
+	
+--CREATE OR REPLACE FUNCTION UpdateItemsPurchased() RETURNS 
+--	TRIGGER AS $updateDailySales$
+--	BEGIN
+--		INSERT INTO DailySales (UPC, priceUSD, costUSD, date, QtySold, TotalAmtBTaxUSD)
+--		VALUES
+--		(New.UPC, priceUSD, costUSD, current_date, QtySold, TotalAmtBTaxUSD);
+--		RETURN NEW;
+--	END;
+--$updateDailySales$ LANGUAGE plpgsql;
+--
+--CREATE TRIGGER trigDailySales AFTER INSERT OR UPDATE 
+--	ON ItemsPurchased
+--	FOR EACH ROW 
+--	EXECUTE PROCEDURE UpdateItemsPurchased();
+--
+--INSERT INTO ItemsPurchased (cID,UPC,Date,QtySold)
+--VALUES
+--(1,'000000000002', '2014-04-22', 1);
+--
+-- SELECT trigDailySales;
+-- SELECT * FROM ItemsPurchased ORDER BY Date DESC;
+
 -- Added Vendor Trigger
-
 -- Creating testing View for permissions and what not
-CREATE OR REPLACE VIEW VendorNew AS
-	SELECT * FROM Vendors;
-
+-- CREATE OR REPLACE VIEW VendorNew AS
+-- 	SELECT * FROM Vendors;
+-- 
 -- Using PL/PG SQL function for this trigger function
 -- Updating, Inserting, Deleting from View when base table
 -- is changed.....	
